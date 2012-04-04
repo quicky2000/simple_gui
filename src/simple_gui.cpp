@@ -71,4 +71,27 @@ void simple_gui::setPixel(uint32_t p_x,uint32_t p_y,uint32_t p_color)
 
   }
 
+//------------------------------------------------------------------------------
+uint32_t simple_gui::get_pixel(uint32_t p_x,uint32_t p_y)const
+{
+    if ( SDL_MUSTLOCK(m_screen) )
+      {
+	if ( SDL_LockSurface(m_screen) < 0 )
+	  {
+	    exit(-1);
+	  }
+      }
+
+    uint32_t l_x = p_x * m_coef;
+    uint32_t l_y = p_y * m_coef;
+    uint32_t *l_bufp = (uint32_t *)m_screen->pixels + l_y * m_screen->pitch/4 + l_x;
+    uint32_t l_result = *l_bufp;
+    if ( SDL_MUSTLOCK(m_screen) )
+      {
+	SDL_UnlockSurface(m_screen);
+      }
+    return l_result;
+}
+
+
 //EOF
