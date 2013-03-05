@@ -29,14 +29,22 @@ void simple_gui::createWindow(uint32_t p_width,uint32_t p_height)
   std::cout << "coef = " << m_coef << std::endl ;
   
   
-  p_width = p_width * m_coef;
-  p_height = p_height * m_coef;
-  m_screen = SDL_SetVideoMode(p_width,p_height,32,SDL_SWSURFACE);
+  m_width = p_width * m_coef;
+  m_height = p_height * m_coef;
+  m_screen = SDL_SetVideoMode(m_width,m_height,32,SDL_SWSURFACE);
   if(m_screen == NULL)
     {
-      std::cout << "Unable to set video mode to " << p_width << "*"<< p_height << "*32" << std::endl ;
+      std::cout << "Unable to set video mode to " << m_width << "*"<< m_height << "*32" << std::endl ;
       SDL_Quit();
     }
+
+  uint32_t l_x = 0;
+  uint32_t l_y = 0;
+  m_start = m_screen->pixels;
+  l_x = (m_width - 1) * m_coef;
+  l_y = (m_height - 1) * m_coef;
+  m_size= (uint64_t)m_screen->pixels + l_y * m_screen->pitch/4 + l_x - (uint64_t)m_start + 1;
+  m_size *= sizeof(uint32_t);
 }
 
 //------------------------------------------------------------------------------
@@ -55,14 +63,7 @@ void simple_gui::setPixel(uint32_t p_x,uint32_t p_y,uint32_t p_color)
 	    exit(-1);
 	  }
       }
-    for(uint32_t l_x = p_x * m_coef;l_x < m_coef *(p_x + 1);++l_x)
-      {
-	for(uint32_t l_y = p_y * m_coef;l_y < m_coef *(p_y + 1);++l_y)
-	  {
-	    uint32_t *l_bufp = (uint32_t *)m_screen->pixels + l_y * m_screen->pitch/4 + l_x;
-	    *l_bufp = p_color;
-	  }
-      }
+    set_pixel_without_lock(p_x,p_y,p_color);
 	  
     if ( SDL_MUSTLOCK(m_screen) )
       {
@@ -93,5 +94,250 @@ uint32_t simple_gui::get_pixel(uint32_t p_x,uint32_t p_y)const
     return l_result;
 }
 
+void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint32_t p_color)
+{
+  uint32_t l_delta_x = (x1 < x2 ? 1 : -1 );
+  uint32_t l_delta_y = (y1 < y2 ? 1 : -1 );
+  if(y1 == y2)
+    {
+      for(uint32_t l_x = x1 ; l_x != x2; l_x += l_delta_x)
+        {
+          this->setPixel(l_x,y1,p_color);
+        }
+    }
+  else if(x1 == x2)
+    {
+      for(uint32_t l_y = y1 ; l_y != y2; l_y += l_delta_y)
+        {
+          this->setPixel(x1,l_y,p_color);
+        }
+    }
+  else
+    {
+      uint32_t l_x = x1;
+      uint32_t l_y = y1;
+      if(abs(x2-x1) == abs(y2-y1))
+        {
+          while(l_x != x2)
+            {
+              this->setPixel(l_x,l_y,p_color);
+              l_x += l_delta_x;
+              l_y += l_delta_y;
+            }
+        }
+      else
+        {
+          int32_t l_diff_x = x2 -x1;
+          int32_t l_diff_y = y2 -y1;
+          if(l_diff_x != 0)
+            {
+              if(l_diff_x > 0)
+                {
+                  if(l_diff_y != 0 )
+                    {
+                      if(l_diff_y > 0)
+                        {
+                          // vecteur oblique dans le 1er quadran
+                          if(l_diff_x >= l_diff_y)
+                            {
+                              // vecteur diagonal ou oblique proche de l?horizontale, dans le 1er octant
+                              int32_t cumulated_error = l_diff_x;
+                              l_diff_x = cumulated_error * 2;
+                              l_diff_y = l_diff_y * 2; //positive cumulated_error
+                              while((x1 = x1 + 1) != x2)  // déplacements horizontaux
+                                {
+                                  this->setPixel(x1,y1,p_color);
+                                  if((cumulated_error = cumulated_error - l_diff_y) < 0)
+                                    {
+                                      y1 = y1 + 1 ;  // diagonal move
+                                      cumulated_error = cumulated_error + l_diff_x ;
+                                    }
+                                }
+                            }
+                          else
+                            {
+                              // vecteur oblique proche de la verticale, dans le 2nd octant
+                              int32_t cumulated_error = l_diff_y;
+                              l_diff_y = cumulated_error * 2 ;
+                              l_diff_x = l_diff_x * 2 ;  // positive cumulated_error
+                              while((y1 = y1 + 1) != y2)  // vertical moves
+                                {
+                                  this->setPixel(x1,y1,p_color);
+                                  if((cumulated_error = cumulated_error - l_diff_x) < 0)
+                                    {
+                                      x1 = x1 + 1 ;  // diagonal move
+                                      cumulated_error = cumulated_error + l_diff_y ;
+                                    }
+                                }
+                            }
+                        }
+                      else
+                        { 
+                          // l_diff_y < 0 (et l_diff_x > 0)
+                          // vecteur oblique dans le 4e cadran
+                          if(l_diff_x >= -l_diff_y)
+                            {
+                              // vecteur diagonal ou oblique proche de l?horizontale, dans le 8e octant
+                              int32_t cumulated_error = l_diff_x;
+                              l_diff_x = cumulated_error * 2 ;
+                              l_diff_y = l_diff_y * 2 ;  // cumulated_error est positif
+                              while((x1 = x1 + 1) != x2)// déplacements horizontaux
+                                {
+                                  this->setPixel(x1,y1,p_color);
+                                  if((cumulated_error = cumulated_error + l_diff_y) < 0)
+                                    {
+                                      y1 = y1 - 1 ;  // diagonal move
+                                      cumulated_error = cumulated_error + l_diff_x ;
+                                    }
+                                }
+                            }
+                          else
+                            {
+                              // vecteur oblique proche de la verticale, dans le 7e octant
+                              int32_t cumulated_error = l_diff_y;
+                              l_diff_y = cumulated_error * 2 ; 
+                              l_diff_x = l_diff_x * 2 ;  // negative cumulated_error
+                              while((y1 = y1 - 1) != y2)  // vertical moves
+                                {
+                                  this->setPixel(x1,y1,p_color);
+                                  if((cumulated_error = cumulated_error + l_diff_x) > 0)
+                                    {
+                                      x1 = x1 + 1 ;  // diagonal move
+                                      cumulated_error = cumulated_error + l_diff_y ;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                  else
+                    {  // l_diff_y = 0 (et l_diff_x > 0)
+                      
+                      // vecteur horizontal vers la droite
+                      while((x1 = x1 + 1) != x2)
+                        {
+                          this->setPixel(x1,y1,p_color);
+                        }
+                      
+                    }
+                }
+              else
+                {
+                  // l_diff_x < 0
+                  if(l_diff_y != 0)
+                    {
+                      if(l_diff_y > 0)
+                        {
+                          // vecteur oblique dans le 2nd quadran
+                          if(-l_diff_x >= l_diff_y)
+                            {
+                              // vecteur diagonal ou oblique proche de l?horizontale, dans le 4e octant
+                              int32_t cumulated_error = l_diff_x ;
+                              l_diff_x = cumulated_error * 2 ;
+                              l_diff_y = l_diff_y * 2 ;  // negative cumulated_error
+                              while((x1 = x1 - 1) != x2)  // déplacements horizontaux
+                                {
+                                  this->setPixel(x1,y1,p_color);
+                                  if((cumulated_error = cumulated_error + l_diff_y) >= 0)
+                                    {
+                                      y1 = y1 + 1 ;  // diagonal move
+                                      cumulated_error = cumulated_error + l_diff_x ;
+                                    }
+                                }
+                            }
+                          else
+                            {
+                              // vecteur oblique proche de la verticale, dans le 3e octant
+                              int32_t cumulated_error = l_diff_y;
+                              l_diff_y = cumulated_error * 2 ; 
+                              l_diff_x = l_diff_x * 2 ;  // positive cumulated_error
+                              while((y1 = y1 + 1) != y2)  // vertical moves
+                                {
+                                  this->setPixel(x1,y1,p_color);
+                                  if((cumulated_error = cumulated_error + l_diff_x) <= 0)
+                                    {
+                                      x1 = x1 - 1 ;  // diagonal move
+                                      cumulated_error = cumulated_error + l_diff_y ;
+                                    }
+                                }
+                            }
+                        }
+                      else
+                        {
+                          // l_diff_y < 0 (et l_diff_x < 0)
+                          // vecteur oblique dans le 3e cadran
+                          if(l_diff_x <= l_diff_y)
+                            {
+                              // vecteur diagonal ou oblique proche de l?horizontale, dans le 5e octant
+                              int32_t cumulated_error = l_diff_x;
+                              l_diff_x = cumulated_error * 2 ; 
+                              l_diff_y = l_diff_y * 2 ;  // negative cumulated_error
+                              while((x1 = x1 - 1) != x2)  // déplacements horizontaux
+                                {
+                                  this->setPixel(x1,y1,p_color);
+                                  if((cumulated_error = cumulated_error - l_diff_y) >= 0)
+                                    {
+                                      y1 = y1 - 1 ;  // diagonal move
+                                      cumulated_error = cumulated_error + l_diff_x ;
+                                    }
+                                }
+                            }
+                          else
+                            {
+                              // vecteur oblique proche de la verticale, dans le 6e octant
+                              int32_t cumulated_error = l_diff_y;
+                              l_diff_y = cumulated_error * 2 ; 
+                              l_diff_x = l_diff_x * 2 ;  // negative cumulated_error
+                              while((y1 = y1 - 1) != y2 )  // vertical moves
+                                {
+                                  this->setPixel(x1,y1,p_color);
+                                  if((cumulated_error = cumulated_error - l_diff_x) >= 0)
+                                    {
+                                      x1 = x1 - 1 ;  // diagonal move
+                                      cumulated_error = cumulated_error + l_diff_y ;
+                                    }
+                                }
+                            }
+          
+                        }
+                    }
+                  else
+                    {
+                      // l_diff_y = 0 (et l_diff_x < 0)
+                      // vecteur horizontal vers la gauche
+                      while((x1 = x1 - 1) != x2)
+                        {
+                          this->setPixel(x1,y1,p_color);
+                        }
+                    }
+                }
+            }
+          else
+            {
+              // l_diff_x = 0
+              if(l_diff_y != 0)
+                {
+                  if(l_diff_y > 0)
+                    {
+                      // vecteur vertical croissant
+                      while((y1 = y1 + 1) != y2)
+                        {
+                          this->setPixel(x1,y1,p_color);
+                        }
+                    }
+                  else
+                    {
+                      // l_diff_y < 0 (et l_diff_x = 0)
+                      // vecteur vertical décroissant
+                      while((y1 = y1 - 1) != y2)
+                        { 
+                          this->setPixel(x1,y1,p_color);
+                        }
 
+                    }
+                }
+            }
+
+        }
+    }
+}
 //EOF
