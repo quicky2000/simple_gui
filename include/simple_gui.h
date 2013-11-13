@@ -1,3 +1,20 @@
+/*    This file is part of simple_gui
+      The aim of this software is to provide a simple SDL based GUI
+      Copyright (C) 2013  Julien Thevenon ( julien_thevenon at yahoo.fr )
+
+      This program is free software: you can redistribute it and/or modify
+      it under the terms of the GNU General Public License as published by
+      the Free Software Foundation, either version 3 of the License, or
+      (at your option) any later version.
+
+      This program is distributed in the hope that it will be useful,
+      but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+      GNU General Public License for more details.
+
+      You should have received a copy of the GNU General Public License
+      along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
 #ifndef _SIMPLE_GUI_H_
 #define _SIMPLE_GUI_H_
 
@@ -36,6 +53,7 @@ private:
   unsigned int m_height;
 };
 
+//------------------------------------------------------------------------------
 void * simple_gui::save_buffer(void)const
 {
   void * l_buffer = new uint8_t[m_size];
@@ -44,6 +62,7 @@ void * simple_gui::save_buffer(void)const
   return l_buffer;
 }
 
+//------------------------------------------------------------------------------
 void simple_gui::load_buffer(void * p_buffer)
 {
   memcpy(m_start,p_buffer,m_size);
@@ -104,7 +123,5 @@ void simple_gui::unlock(void)
       SDL_UnlockSurface(m_screen);
     }
 }
-
-
 
 #endif /* _SIMPLE_GUI_H_ */
