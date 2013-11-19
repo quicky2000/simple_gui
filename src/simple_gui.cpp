@@ -36,6 +36,8 @@ void simple_gui::createWindow(uint32_t p_width,uint32_t p_height)
   const SDL_VideoInfo *l_video_info = SDL_GetVideoInfo();
   
   assert(l_video_info);
+  uint32_t l_sdl_version = SDL_COMPILEDVERSION;
+  std::cout << "SDL Version : " << l_sdl_version << std::endl ;
 #if SDL_COMPILEDVERSION >= SDL_VERSIONNUM(1, 2, 14)
   std::cout << "Current resolution : " << l_video_info->current_w << "x" << l_video_info->current_h << " with Pixel Format " << ((uint32_t)l_video_info->vfmt->BitsPerPixel) << " bits per pixel" << std::endl ;
   m_coef = (l_video_info->current_w / p_width < l_video_info->current_h / p_height ? l_video_info->current_w / p_width : l_video_info->current_h / p_height );

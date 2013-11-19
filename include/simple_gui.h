@@ -23,7 +23,7 @@
 
 class simple_gui
 {
-public:
+ public:
   simple_gui(void);
 
   void createWindow(uint32_t p_width,uint32_t p_height);
@@ -31,6 +31,10 @@ public:
   inline uint32_t getColorCode(uint8_t r,uint8_t g,uint8_t b);
   inline void get_RGB_code(uint32_t p_color,uint8_t & r,uint8_t & g,uint8_t & b);
   inline void refresh(void);
+  inline void refresh(const uint32_t & p_x,
+                      const uint32_t & p_y,
+                      const uint32_t & p_width,
+                      const uint32_t & p_height);
   inline void * save_buffer(void)const;
   inline void load_buffer(void *);
 
@@ -44,7 +48,9 @@ public:
   inline void lock(void);
   inline void unlock(void);
 
-private:
+  inline const uint32_t & get_width(void)const;
+  inline const uint32_t & get_height(void)const;
+ private:
   SDL_Surface *m_screen;
   uint32_t m_coef;
   void * m_start;
@@ -88,6 +94,15 @@ void simple_gui::refresh(void)
 }
 
 //------------------------------------------------------------------------------
+void simple_gui::refresh(const uint32_t & p_x,
+                         const uint32_t & p_y,
+                         const uint32_t & p_width,
+                         const uint32_t & p_height)
+{
+  SDL_UpdateRect(m_screen,p_x * m_coef,p_y * m_coef,p_width * m_coef,p_height * m_coef);
+}
+
+//------------------------------------------------------------------------------
 void simple_gui::set_pixel_without_lock(uint32_t p_x,uint32_t p_y,uint32_t p_color)
 {
   for(uint32_t l_x = p_x * m_coef;l_x < m_coef *(p_x + 1);++l_x)
@@ -124,4 +139,17 @@ void simple_gui::unlock(void)
     }
 }
 
+//------------------------------------------------------------------------------
+const uint32_t & simple_gui::get_width(void)const
+{
+  return m_width;
+}
+
+//------------------------------------------------------------------------------
+const uint32_t & simple_gui::get_height(void)const
+{
+  return m_height;
+}
+
 #endif /* _SIMPLE_GUI_H_ */
+//EOF
