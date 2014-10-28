@@ -31,6 +31,24 @@ simple_gui::simple_gui(void):
 }
 
 //------------------------------------------------------------------------------
+void simple_gui::get_screen_info(uint32_t & p_width,
+				 uint32_t & p_height,
+				 uint32_t & p_nb_bits_per_pixel)
+{
+  const SDL_VideoInfo *l_video_info = SDL_GetVideoInfo();
+  assert(l_video_info);
+#if SDL_COMPILEDVERSION >= SDL_VERSIONNUM(1, 2, 14)
+  p_width= l_video_info->current_w;
+  p_height = l_video_info->current_h;
+  p_nb_bits_per_pixel = l_video_info->vfmt->BitsPerPixel;
+#else
+  p_width = 0;
+  p_height = 0;
+  p_nb_bits_per_pixel = 0;
+#endif
+}
+
+//------------------------------------------------------------------------------
 void simple_gui::createWindow(uint32_t p_width,uint32_t p_height)
 {
   const SDL_VideoInfo *l_video_info = SDL_GetVideoInfo();
