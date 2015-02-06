@@ -16,8 +16,10 @@
       along with this program.  If not, see <http://www.gnu.org/licenses/>
 */
 #include "simple_gui.h"
+#include "quicky_exception.h"
 #include <iostream>
 #include <assert.h>
+#include <string>
 
 //------------------------------------------------------------------------------
 simple_gui::simple_gui(void):
@@ -35,9 +37,9 @@ void simple_gui::get_screen_info(uint32_t & p_width,
 				 uint32_t & p_height,
 				 uint32_t & p_nb_bits_per_pixel)
 {
+#if SDL_COMPILEDVERSION >= SDL_VERSIONNUM(1, 2, 14)
   const SDL_VideoInfo *l_video_info = SDL_GetVideoInfo();
   assert(l_video_info);
-#if SDL_COMPILEDVERSION >= SDL_VERSIONNUM(1, 2, 14)
   p_width= l_video_info->current_w;
   p_height = l_video_info->current_h;
   p_nb_bits_per_pixel = l_video_info->vfmt->BitsPerPixel;
@@ -51,12 +53,11 @@ void simple_gui::get_screen_info(uint32_t & p_width,
 //------------------------------------------------------------------------------
 void simple_gui::createWindow(uint32_t p_width,uint32_t p_height)
 {
-  const SDL_VideoInfo *l_video_info = SDL_GetVideoInfo();
-  
-  assert(l_video_info);
   uint32_t l_sdl_version = SDL_COMPILEDVERSION;
   std::cout << "SDL Version : " << l_sdl_version << std::endl ;
 #if SDL_COMPILEDVERSION >= SDL_VERSIONNUM(1, 2, 14)
+  const SDL_VideoInfo *l_video_info = SDL_GetVideoInfo();
+  assert(l_video_info);
   std::cout << "Current resolution : " << l_video_info->current_w << "x" << l_video_info->current_h << " with Pixel Format " << ((uint32_t)l_video_info->vfmt->BitsPerPixel) << " bits per pixel" << std::endl ;
   m_coef = (l_video_info->current_w / p_width < l_video_info->current_h / p_height ? l_video_info->current_w / p_width : l_video_info->current_h / p_height );
 #else
@@ -93,6 +94,7 @@ simple_gui::~simple_gui(void)
 //------------------------------------------------------------------------------
 void simple_gui::setPixel(uint32_t p_x,uint32_t p_y,uint32_t p_color)
   {
+#if 1
     if ( SDL_MUSTLOCK(m_screen) )
       {
 	if ( SDL_LockSurface(m_screen) < 0 )
@@ -106,7 +108,15 @@ void simple_gui::setPixel(uint32_t p_x,uint32_t p_y,uint32_t p_color)
       {
 	SDL_UnlockSurface(m_screen);
       }
-
+#else
+    SDL_Rect rect;
+    rect.x = p_x;
+    rect.y = p_y;
+    rect.w = 1  ;
+    rect.h = 1  ;
+    
+    SDL_FillRect( m_screen, &rect, p_color);
+#endif
   }
 
 //------------------------------------------------------------------------------
@@ -377,4 +387,49 @@ void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint3
         }
     }
 }
+
+//------------------------------------------------------------------------------
+void * simple_gui::export_rectangle(const uint32_t & p_x,const uint32_t & p_y, const uint32_t & p_width, const uint32_t & p_height)
+{
+  SDL_Surface * l_surface = SDL_CreateRGBSurface(0,m_coef*p_width,m_coef*p_height,32,0,0,0,0);
+  SDL_Rect l_src_rect;
+  l_src_rect.x = p_x * m_coef;
+  l_src_rect.y = p_y * m_coef;
+  l_src_rect.w = p_width  * m_coef;
+  l_src_rect.h = p_height  * m_coef;
+
+  SDL_Rect l_dst_rect;
+  l_dst_rect.x = 0;
+  l_dst_rect.y = 0;
+  l_dst_rect.w = p_width  * m_coef;
+  l_dst_rect.h = p_height  * m_coef;
+
+  int l_status = SDL_BlitSurface(m_screen,&l_src_rect,l_surface,&l_dst_rect);
+  if(!l_status) return l_surface;
+  std::string l_error_message(SDL_GetError());
+  throw quicky_exception::quicky_logic_exception(l_error_message,__LINE__,__FILE__);
+}
+
+//------------------------------------------------------------------------------
+void simple_gui::import_rectangle(const uint32_t & p_x,const uint32_t & p_y, const uint32_t & p_width, const uint32_t & p_height,void* p_data)
+{
+  SDL_Rect l_src_rect;
+  l_src_rect.x = 0;
+  l_src_rect.y = 0;
+  l_src_rect.w = p_width * m_coef;
+  l_src_rect.h = p_height * m_coef ;
+
+  SDL_Rect l_dst_rect;
+  l_dst_rect.x = p_x * m_coef;
+  l_dst_rect.y = p_y * m_coef;
+  l_dst_rect.w = p_width  * m_coef;
+  l_dst_rect.h = p_height  * m_coef;
+
+  int l_status = SDL_BlitSurface((SDL_Surface*)p_data,&l_src_rect,m_screen,&l_dst_rect);
+  if(!l_status) return;
+  std::string l_error_message(SDL_GetError());
+  throw quicky_exception::quicky_logic_exception(l_error_message,__LINE__,__FILE__);
+}
+
+
 //EOF

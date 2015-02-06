@@ -19,7 +19,7 @@
 #define _SIMPLE_GUI_H_
 
 #include "SDL/SDL.h"
-#include <stdint.h>
+#include <cstdint>
 
 class simple_gui
 {
@@ -39,11 +39,17 @@ class simple_gui
                       const uint32_t & p_height);
   inline void * save_buffer(void)const;
   inline void load_buffer(void *);
+  void * export_rectangle(const uint32_t & p_x,const uint32_t & p_y, const uint32_t & p_width, const uint32_t & p_height);
+  void import_rectangle(const uint32_t & p_x,const uint32_t & p_y, const uint32_t & p_width, const uint32_t & p_height,void* p_data);
+  inline void free_rectangle(void *);
 
   virtual ~simple_gui(void);
   void setPixel(uint32_t p_x,uint32_t p_y,uint32_t p_color);
   inline void set_pixel_without_lock(uint32_t p_x,uint32_t p_y,uint32_t p_color);
   uint32_t get_pixel(uint32_t p_x,uint32_t p_y)const;
+
+  inline void set_rectangle_without_lock(const uint32_t & p_x,const uint32_t & p_y, const uint32_t & p_width, const uint32_t & p_height, const uint32_t & p_color);
+  inline void set_rectangle(const uint32_t & p_x,const uint32_t & p_y, const uint32_t & p_width, const uint32_t & p_height, const uint32_t & p_color);
 
   void draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint32_t p_color);
 
@@ -107,6 +113,7 @@ void simple_gui::refresh(const uint32_t & p_x,
 //------------------------------------------------------------------------------
 void simple_gui::set_pixel_without_lock(uint32_t p_x,uint32_t p_y,uint32_t p_color)
 {
+#if 1
   for(uint32_t l_x = p_x * m_coef;l_x < m_coef *(p_x + 1);++l_x)
     {
       for(uint32_t l_y = p_y * m_coef;l_y < m_coef *(p_y + 1);++l_y)
@@ -118,6 +125,35 @@ void simple_gui::set_pixel_without_lock(uint32_t p_x,uint32_t p_y,uint32_t p_col
 	    }
 	}
     }	  
+#else
+    SDL_Rect rect;
+    rect.x = p_x * m_coef;
+    rect.y = p_y * m_coef;
+    rect.w = m_coef  ;
+    rect.h = m_coef  ;
+    
+    SDL_FillRect( m_screen, &rect, p_color);
+#endif
+
+}
+
+//------------------------------------------------------------------------------
+void simple_gui::set_rectangle_without_lock(const uint32_t & p_x,const uint32_t & p_y, const uint32_t & p_width, const uint32_t & p_height, const uint32_t & p_color)
+{
+    SDL_Rect rect;
+    rect.x = p_x * m_coef;
+    rect.y = p_y * m_coef;
+    rect.w = m_coef * p_width ;
+    rect.h = m_coef * p_height ;    
+    SDL_FillRect( m_screen, &rect, p_color); 
+}
+
+//------------------------------------------------------------------------------
+void simple_gui::set_rectangle(const uint32_t & p_x,const uint32_t & p_y, const uint32_t & p_width, const uint32_t & p_height, const uint32_t & p_color)
+{
+  lock();
+  set_rectangle_without_lock(p_x,p_y,p_width,p_height,p_color);
+  unlock();
 }
 
 //------------------------------------------------------------------------------
@@ -151,6 +187,12 @@ const uint32_t & simple_gui::get_width(void)const
 const uint32_t & simple_gui::get_height(void)const
 {
   return m_height;
+}
+
+//------------------------------------------------------------------------------
+void simple_gui::free_rectangle(void * p_data)
+{
+  SDL_FreeSurface((SDL_Surface*)p_data);
 }
 
 #endif /* _SIMPLE_GUI_H_ */
