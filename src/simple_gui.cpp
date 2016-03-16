@@ -51,7 +51,7 @@ void simple_gui::get_screen_info(uint32_t & p_width,
 }
 
 //------------------------------------------------------------------------------
-void simple_gui::createWindow(uint32_t p_width,uint32_t p_height)
+void simple_gui::create_window(uint32_t p_width,uint32_t p_height)
 {
   uint32_t l_sdl_version = SDL_COMPILEDVERSION;
   std::cout << "SDL Version : " << l_sdl_version << std::endl ;
@@ -91,7 +91,7 @@ simple_gui::~simple_gui(void)
 }
 
 //------------------------------------------------------------------------------
-void simple_gui::setPixel(uint32_t p_x,uint32_t p_y,uint32_t p_color)
+void simple_gui::set_pixel(uint32_t p_x,uint32_t p_y,uint32_t p_color)
   {
 #if 1
     if ( SDL_MUSTLOCK(m_screen) )
@@ -140,6 +140,7 @@ uint32_t simple_gui::get_pixel(uint32_t p_x,uint32_t p_y)const
     return l_result;
 }
 
+//------------------------------------------------------------------------------
 void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint32_t p_color)
 {
   uint32_t l_delta_x = (x1 < x2 ? 1 : -1 );
@@ -148,14 +149,14 @@ void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint3
     {
       for(uint32_t l_x = x1 ; l_x != x2; l_x += l_delta_x)
         {
-          this->setPixel(l_x,y1,p_color);
+          this->set_pixel(l_x,y1,p_color);
         }
     }
   else if(x1 == x2)
     {
       for(uint32_t l_y = y1 ; l_y != y2; l_y += l_delta_y)
         {
-          this->setPixel(x1,l_y,p_color);
+          this->set_pixel(x1,l_y,p_color);
         }
     }
   else
@@ -166,7 +167,7 @@ void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint3
         {
           while(l_x != x2)
             {
-              this->setPixel(l_x,l_y,p_color);
+              this->set_pixel(l_x,l_y,p_color);
               l_x += l_delta_x;
               l_y += l_delta_y;
             }
@@ -192,7 +193,7 @@ void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint3
                               l_diff_y = l_diff_y * 2; //positive cumulated_error
                               while((x1 = x1 + 1) != x2)  // déplacements horizontaux
                                 {
-                                  this->setPixel(x1,y1,p_color);
+                                  this->set_pixel(x1,y1,p_color);
                                   if((cumulated_error = cumulated_error - l_diff_y) < 0)
                                     {
                                       y1 = y1 + 1 ;  // diagonal move
@@ -208,7 +209,7 @@ void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint3
                               l_diff_x = l_diff_x * 2 ;  // positive cumulated_error
                               while((y1 = y1 + 1) != y2)  // vertical moves
                                 {
-                                  this->setPixel(x1,y1,p_color);
+                                  this->set_pixel(x1,y1,p_color);
                                   if((cumulated_error = cumulated_error - l_diff_x) < 0)
                                     {
                                       x1 = x1 + 1 ;  // diagonal move
@@ -229,7 +230,7 @@ void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint3
                               l_diff_y = l_diff_y * 2 ;  // cumulated_error est positif
                               while((x1 = x1 + 1) != x2)// déplacements horizontaux
                                 {
-                                  this->setPixel(x1,y1,p_color);
+                                  this->set_pixel(x1,y1,p_color);
                                   if((cumulated_error = cumulated_error + l_diff_y) < 0)
                                     {
                                       y1 = y1 - 1 ;  // diagonal move
@@ -245,7 +246,7 @@ void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint3
                               l_diff_x = l_diff_x * 2 ;  // negative cumulated_error
                               while((y1 = y1 - 1) != y2)  // vertical moves
                                 {
-                                  this->setPixel(x1,y1,p_color);
+                                  this->set_pixel(x1,y1,p_color);
                                   if((cumulated_error = cumulated_error + l_diff_x) > 0)
                                     {
                                       x1 = x1 + 1 ;  // diagonal move
@@ -261,7 +262,7 @@ void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint3
                       // vecteur horizontal vers la droite
                       while((x1 = x1 + 1) != x2)
                         {
-                          this->setPixel(x1,y1,p_color);
+                          this->set_pixel(x1,y1,p_color);
                         }
 
                     }
@@ -282,7 +283,7 @@ void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint3
                               l_diff_y = l_diff_y * 2 ;  // negative cumulated_error
                               while((x1 = x1 - 1) != x2)  // déplacements horizontaux
                                 {
-                                  this->setPixel(x1,y1,p_color);
+                                  this->set_pixel(x1,y1,p_color);
                                   if((cumulated_error = cumulated_error + l_diff_y) >= 0)
                                     {
                                       y1 = y1 + 1 ;  // diagonal move
@@ -298,7 +299,7 @@ void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint3
                               l_diff_x = l_diff_x * 2 ;  // positive cumulated_error
                               while((y1 = y1 + 1) != y2)  // vertical moves
                                 {
-                                  this->setPixel(x1,y1,p_color);
+                                  this->set_pixel(x1,y1,p_color);
                                   if((cumulated_error = cumulated_error + l_diff_x) <= 0)
                                     {
                                       x1 = x1 - 1 ;  // diagonal move
@@ -319,7 +320,7 @@ void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint3
                               l_diff_y = l_diff_y * 2 ;  // negative cumulated_error
                               while((x1 = x1 - 1) != x2)  // déplacements horizontaux
                                 {
-                                  this->setPixel(x1,y1,p_color);
+                                  this->set_pixel(x1,y1,p_color);
                                   if((cumulated_error = cumulated_error - l_diff_y) >= 0)
                                     {
                                       y1 = y1 - 1 ;  // diagonal move
@@ -335,7 +336,7 @@ void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint3
                               l_diff_x = l_diff_x * 2 ;  // negative cumulated_error
                               while((y1 = y1 - 1) != y2 )  // vertical moves
                                 {
-                                  this->setPixel(x1,y1,p_color);
+                                  this->set_pixel(x1,y1,p_color);
                                   if((cumulated_error = cumulated_error - l_diff_x) >= 0)
                                     {
                                       x1 = x1 - 1 ;  // diagonal move
@@ -352,7 +353,7 @@ void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint3
                       // vecteur horizontal vers la gauche
                       while((x1 = x1 - 1) != x2)
                         {
-                          this->setPixel(x1,y1,p_color);
+                          this->set_pixel(x1,y1,p_color);
                         }
                     }
                 }
@@ -367,7 +368,7 @@ void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint3
                       // vecteur vertical croissant
                       while((y1 = y1 + 1) != y2)
                         {
-                          this->setPixel(x1,y1,p_color);
+                          this->set_pixel(x1,y1,p_color);
                         }
                     }
                   else
@@ -376,7 +377,7 @@ void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint3
                       // vecteur vertical décroissant
                       while((y1 = y1 - 1) != y2)
                         {
-                          this->setPixel(x1,y1,p_color);
+                          this->set_pixel(x1,y1,p_color);
                         }
 
                     }

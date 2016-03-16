@@ -19,7 +19,7 @@
 #define _SIMPLE_GUI_H_
 
 #include "SDL/SDL.h"
-#include <cstdint>
+#include <cinttypes>
 
 class simple_gui
 {
@@ -28,9 +28,9 @@ class simple_gui
   void get_screen_info(uint32_t & p_width,
 		       uint32_t & p_height,
 		       uint32_t & p_nb_bits_per_pixel);
-  void createWindow(uint32_t p_width,uint32_t p_height);
+  void create_window(uint32_t p_width,uint32_t p_height);
 
-  inline uint32_t getColorCode(uint8_t r,uint8_t g,uint8_t b);
+  inline uint32_t get_color_code(uint8_t r,uint8_t g,uint8_t b);
   inline void get_RGB_code(uint32_t p_color,uint8_t & r,uint8_t & g,uint8_t & b);
   inline void refresh(void);
   inline void refresh(const uint32_t & p_x,
@@ -44,7 +44,7 @@ class simple_gui
   inline void free_rectangle(void *);
 
   virtual ~simple_gui(void);
-  void setPixel(uint32_t p_x,uint32_t p_y,uint32_t p_color);
+  void set_pixel(uint32_t p_x,uint32_t p_y,uint32_t p_color);
   inline void set_pixel_without_lock(uint32_t p_x,uint32_t p_y,uint32_t p_color);
   uint32_t get_pixel(uint32_t p_x,uint32_t p_y)const;
 
@@ -84,7 +84,7 @@ void simple_gui::load_buffer(void * p_buffer)
 
 
 //------------------------------------------------------------------------------
-uint32_t simple_gui::getColorCode(uint8_t r,uint8_t g,uint8_t b)
+uint32_t simple_gui::get_color_code(uint8_t r,uint8_t g,uint8_t b)
 {
   return SDL_MapRGB(m_screen->format,r,g,b);
 }
@@ -194,5 +194,5 @@ void simple_gui::free_rectangle(void * p_data)
   SDL_FreeSurface((SDL_Surface*)p_data);
 }
 
-#endif /* _SIMPLE_GUI_H_ */
+#endif // _SIMPLE_GUI_H_
 //EOF
