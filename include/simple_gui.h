@@ -92,7 +92,7 @@ uint32_t simple_gui::getColorCode(uint8_t r,uint8_t g,uint8_t b)
 //------------------------------------------------------------------------------
 void simple_gui::get_RGB_code(uint32_t p_color,uint8_t & r,uint8_t & g,uint8_t & b)
 {
-  SDL_GetRGB(p_color,m_screen->format,&r,&g,&b); 
+  SDL_GetRGB(p_color,m_screen->format,&r,&g,&b);
 }
 
 //------------------------------------------------------------------------------
@@ -124,14 +124,13 @@ void simple_gui::set_pixel_without_lock(uint32_t p_x,uint32_t p_y,uint32_t p_col
 	      *l_bufp = p_color;
 	    }
 	}
-    }	  
+    } 
 #else
     SDL_Rect rect;
     rect.x = p_x * m_coef;
     rect.y = p_y * m_coef;
     rect.w = m_coef  ;
     rect.h = m_coef  ;
-    
     SDL_FillRect( m_screen, &rect, p_color);
 #endif
 
@@ -144,8 +143,8 @@ void simple_gui::set_rectangle_without_lock(const uint32_t & p_x,const uint32_t 
     rect.x = p_x * m_coef;
     rect.y = p_y * m_coef;
     rect.w = m_coef * p_width ;
-    rect.h = m_coef * p_height ;    
-    SDL_FillRect( m_screen, &rect, p_color); 
+    rect.h = m_coef * p_height ;
+    SDL_FillRect( m_screen, &rect, p_color);
 }
 
 //------------------------------------------------------------------------------

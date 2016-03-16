@@ -65,8 +65,7 @@ void simple_gui::createWindow(uint32_t p_width,uint32_t p_height)
 #endif
   if(!m_coef) m_coef =1 ;
   std::cout << "coef = " << m_coef << std::endl ;
-  
-  
+
   m_width = p_width * m_coef;
   m_height = p_height * m_coef;
   m_screen = SDL_SetVideoMode(m_width,m_height,32,SDL_SWSURFACE);
@@ -103,7 +102,7 @@ void simple_gui::setPixel(uint32_t p_x,uint32_t p_y,uint32_t p_color)
 	  }
       }
     set_pixel_without_lock(p_x,p_y,p_color);
-	  
+ 
     if ( SDL_MUSTLOCK(m_screen) )
       {
 	SDL_UnlockSurface(m_screen);
@@ -114,7 +113,7 @@ void simple_gui::setPixel(uint32_t p_x,uint32_t p_y,uint32_t p_color)
     rect.y = p_y;
     rect.w = 1  ;
     rect.h = 1  ;
-    
+
     SDL_FillRect( m_screen, &rect, p_color);
 #endif
   }
@@ -219,7 +218,7 @@ void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint3
                             }
                         }
                       else
-                        { 
+                        {
                           // l_diff_y < 0 (et l_diff_x > 0)
                           // vecteur oblique dans le 4e cadran
                           if(l_diff_x >= -l_diff_y)
@@ -242,7 +241,7 @@ void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint3
                             {
                               // vecteur oblique proche de la verticale, dans le 7e octant
                               int32_t cumulated_error = l_diff_y;
-                              l_diff_y = cumulated_error * 2 ; 
+                              l_diff_y = cumulated_error * 2 ;
                               l_diff_x = l_diff_x * 2 ;  // negative cumulated_error
                               while((y1 = y1 - 1) != y2)  // vertical moves
                                 {
@@ -258,13 +257,13 @@ void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint3
                     }
                   else
                     {  // l_diff_y = 0 (et l_diff_x > 0)
-                      
+
                       // vecteur horizontal vers la droite
                       while((x1 = x1 + 1) != x2)
                         {
                           this->setPixel(x1,y1,p_color);
                         }
-                      
+
                     }
                 }
               else
@@ -295,7 +294,7 @@ void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint3
                             {
                               // vecteur oblique proche de la verticale, dans le 3e octant
                               int32_t cumulated_error = l_diff_y;
-                              l_diff_y = cumulated_error * 2 ; 
+                              l_diff_y = cumulated_error * 2 ;
                               l_diff_x = l_diff_x * 2 ;  // positive cumulated_error
                               while((y1 = y1 + 1) != y2)  // vertical moves
                                 {
@@ -316,7 +315,7 @@ void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint3
                             {
                               // vecteur diagonal ou oblique proche de l?horizontale, dans le 5e octant
                               int32_t cumulated_error = l_diff_x;
-                              l_diff_x = cumulated_error * 2 ; 
+                              l_diff_x = cumulated_error * 2 ;
                               l_diff_y = l_diff_y * 2 ;  // negative cumulated_error
                               while((x1 = x1 - 1) != x2)  // déplacements horizontaux
                                 {
@@ -332,7 +331,7 @@ void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint3
                             {
                               // vecteur oblique proche de la verticale, dans le 6e octant
                               int32_t cumulated_error = l_diff_y;
-                              l_diff_y = cumulated_error * 2 ; 
+                              l_diff_y = cumulated_error * 2 ;
                               l_diff_x = l_diff_x * 2 ;  // negative cumulated_error
                               while((y1 = y1 - 1) != y2 )  // vertical moves
                                 {
@@ -344,7 +343,7 @@ void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint3
                                     }
                                 }
                             }
-          
+
                         }
                     }
                   else
@@ -376,7 +375,7 @@ void simple_gui::draw_line(uint32_t x1,uint32_t y1,uint32_t x2,uint32_t y2,uint3
                       // l_diff_y < 0 (et l_diff_x = 0)
                       // vecteur vertical décroissant
                       while((y1 = y1 - 1) != y2)
-                        { 
+                        {
                           this->setPixel(x1,y1,p_color);
                         }
 
