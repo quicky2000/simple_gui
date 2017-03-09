@@ -1,3 +1,4 @@
 depend:quicky_exception
 CFLAGS:
 LDFLAGS:-lSDL -lpthread
+env_variables:
