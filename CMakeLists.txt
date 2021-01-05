@@ -20,10 +20,6 @@ set(DEPENDANCY_LIST "quicky_exception")
 #- Generic part
 #------------------------------
 set(DEPENDANCY_OBJECTS "")
-set(LINKED_LIBRARIES "-lSDL")
-if("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
-  set(LINKED_LIBRARIES "${LINKED_LIBRARIES} -lSDLmain -framework Cocoa")
-endif("${CMAKE_SYSTEM_NAME}" STREQUAL "Darwin")
 
 #iterate on dependancies
 foreach(DEPENDANCY_ITEM IN ITEMS ${DEPENDANCY_LIST})
@@ -51,6 +47,7 @@ foreach(DEPENDANCY_ITEM IN ITEMS ${DEPENDANCY_LIST})
 endforeach(DEPENDANCY_ITEM)
 
 find_package(SDL REQUIRED)
+set(LINKED_LIBRARIES ${SDL_LIBRARY})
 
 #Prepare targets
 get_directory_property(HAS_PARENT PARENT_DIRECTORY)
