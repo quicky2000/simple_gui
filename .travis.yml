@@ -34,6 +34,9 @@ before_install:
   - cd build
 
 script:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then cmake $QUICKY_REPOSITORY/simple_gui; make; ./simple_gui; fi
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then generate_makefile simple_gui; make test; ./bin/simple_gui.exe; fi
+  - cd $MY_LOCATION; mkdir cmake_build; cd cmake_build
+  - cmake $QUICKY_REPOSITORY/simple_gui
+  - make
+  - ./simple_gui
 #EOF
