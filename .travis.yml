@@ -2,6 +2,18 @@ matrix:
   include:
     - os: linux
       sudo: required
+      dist: focal
+      compiler: gcc
+    - os: linux
+      sudo: required
+      dist: bionic
+      compiler: gcc
+    - os: linux
+      sudo: required
+      dist: xenial
+      compiler: gcc
+    - os: linux
+      sudo: required
       dist: trusty
       compiler: gcc
     - os: osx
