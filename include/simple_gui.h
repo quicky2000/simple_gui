@@ -18,7 +18,11 @@
 #ifndef _SIMPLE_GUI_H_
 #define _SIMPLE_GUI_H_
 
+#ifndef __APPLE__
 #include "SDL/SDL.h"
+#else // __APPLE__
+#include "SDL.h"
+#endif // __APPLE__
 #include <cinttypes>
 
 namespace simple_gui
