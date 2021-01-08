@@ -31,7 +31,14 @@ namespace simple_gui
     {
       public:
 
-        simple_gui();
+        /**
+         * SImple gui constructor
+         * @param p_enable alloe to disable GUI if false. In this case SDL init
+         * is not called so no method using SDL should be called.
+         * No verifications is performed by the class.
+         */
+        explicit
+        simple_gui(bool p_enable = true);
 
         static
         void get_screen_info(uint32_t & p_width

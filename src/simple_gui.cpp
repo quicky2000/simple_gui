@@ -25,7 +25,7 @@ namespace simple_gui
 {
 
     //------------------------------------------------------------------------------
-    simple_gui::simple_gui()
+    simple_gui::simple_gui(bool p_enable)
     :m_screen(nullptr)
     ,m_coef(20)
     ,m_start(nullptr)
@@ -33,7 +33,7 @@ namespace simple_gui
     ,m_width(0)
     ,m_height(0)
     {
-        if (SDL_Init(SDL_INIT_VIDEO) != 0)
+        if (p_enable && SDL_Init(SDL_INIT_VIDEO) != 0)
         {
             std::cout << "Unable to initialize SDL: " << SDL_GetError() << std::endl ;
         }
