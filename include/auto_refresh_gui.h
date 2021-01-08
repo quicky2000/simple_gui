@@ -46,7 +46,7 @@ namespace simple_gui
         bool is_running()const;
 
         inline
-        ~auto_refresh_gui();
+        ~auto_refresh_gui() override;
 
       private:
 

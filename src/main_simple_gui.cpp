@@ -27,7 +27,7 @@ int main(int argc, char ** argv)
     uint32_t l_width;
     uint32_t l_height;
     uint32_t l_nb_bits_per_pixel;
-    l_gui.get_screen_info(l_width,l_height,l_nb_bits_per_pixel);
+    simple_gui::simple_gui::get_screen_info(l_width,l_height,l_nb_bits_per_pixel);
     std::cout << "Current screen resolution : " << l_width << "*" << l_height << " | " << l_nb_bits_per_pixel << " bits" << std::endl;
     if(!l_width || !l_height) return 0;
     const auto l_window_width = (uint32_t)(l_width * 0.9);

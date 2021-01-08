@@ -18,7 +18,7 @@
 #include "simple_gui.h"
 #include "quicky_exception.h"
 #include <iostream>
-#include <assert.h>
+#include <cassert>
 #include <string>
 
 namespace simple_gui
@@ -26,8 +26,12 @@ namespace simple_gui
 
     //------------------------------------------------------------------------------
     simple_gui::simple_gui()
-    :m_screen(NULL)
+    :m_screen(nullptr)
     ,m_coef(20)
+    ,m_start(nullptr)
+    ,m_size(0)
+    ,m_width(0)
+    ,m_height(0)
     {
         if (SDL_Init(SDL_INIT_VIDEO) != 0)
         {
@@ -74,19 +78,17 @@ namespace simple_gui
 
         m_width = p_width * m_coef;
         m_height = p_height * m_coef;
-        m_screen = SDL_SetVideoMode(m_width,m_height,32,SDL_SWSURFACE);
-        if(m_screen == NULL)
+        m_screen = SDL_SetVideoMode(static_cast<int>(m_width),static_cast<int>(m_height),32,SDL_SWSURFACE);
+        if(m_screen == nullptr)
         {
             std::cout << "Unable to set video mode to " << m_width << "*"<< m_height << "*32" << std::endl ;
             SDL_Quit();
         }
 
-        uint32_t l_x = 0;
-        uint32_t l_y = 0;
         m_start = m_screen->pixels;
-        l_x = (m_width - 1) * m_coef;
-        l_y = (m_height - 1) * m_coef;
-        m_size= (uint64_t)m_screen->pixels + l_y * m_screen->pitch/4 + l_x - (uint64_t)m_start + 1;
+        uint32_t l_x = (m_width - 1) * m_coef;
+        uint32_t l_y = (m_height - 1) * m_coef;
+        m_size= (uint64_t)m_screen->pixels + l_y * m_screen->pitch / 4 + l_x - (uint64_t)m_start + 1;
         m_size *= sizeof(uint32_t);
     }
 
@@ -407,7 +409,7 @@ namespace simple_gui
                                        ,const uint32_t & p_height
                                        )
     {
-        SDL_Surface * l_surface = SDL_CreateRGBSurface(0,m_coef*p_width,m_coef*p_height,32,0,0,0,0);
+        SDL_Surface * l_surface = SDL_CreateRGBSurface(0,static_cast<int>(m_coef * p_width), static_cast<int>(m_coef * p_height),32,0,0,0,0);
         SDL_Rect l_src_rect;
         l_src_rect.x = p_x * m_coef;
         l_src_rect.y = p_y * m_coef;
