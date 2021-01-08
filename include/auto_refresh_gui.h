@@ -26,22 +26,35 @@
 
 namespace simple_gui
 {
+#if __cplusplus >= 201703L
+    class [[maybe_unused]] auto_refresh_gui: public simple_gui
+#else // __cplusplus >= 201703L
     class auto_refresh_gui: public simple_gui
+#endif // __cplusplus >= 201703L
     {
       public:
 
         inline
         auto_refresh_gui();
 
+#if __cplusplus >= 201703L
+        [[maybe_unused]]
+#endif // __cplusplus >= 201703L
         inline
         void start_refresh(const std::chrono::milliseconds & p_delay);
 
         inline
         void stop_refresh();
 
+#if __cplusplus >= 201703L
+        [[nodiscard]] [[maybe_unused]]
+#endif // __cplusplus >= 201703L
         inline
         const std::chrono::milliseconds & get_delay()const;
 
+#if __cplusplus >= 201703L
+        [[nodiscard]] [[maybe_unused]]
+#endif // __cplusplus >= 201703L
         inline
         bool is_running()const;
 
@@ -84,6 +97,9 @@ namespace simple_gui
     }
 
     //------------------------------------------------------------------------------
+#if __cplusplus >= 201703L
+    [[maybe_unused]]
+#endif // __cplusplus >= 201703L
     void auto_refresh_gui::start_refresh(const std::chrono::milliseconds & p_delay)
     {
         m_delay = p_delay;
@@ -102,12 +118,18 @@ namespace simple_gui
     }
 
     //------------------------------------------------------------------------------
+#if __cplusplus >= 201703L
+    [[nodiscard]] [[maybe_unused]]
+#endif // __cplusplus >= 201703L
     const std::chrono::milliseconds & auto_refresh_gui::get_delay()const
     {
         return m_delay;
     }
 
     //------------------------------------------------------------------------------
+#if __cplusplus >= 201703L
+    [[maybe_unused]]
+#endif // __cplusplus >= 201703L
     bool auto_refresh_gui::is_running()const
     {
         return nullptr != m_thread;

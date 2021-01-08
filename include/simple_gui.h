@@ -56,6 +56,9 @@ namespace simple_gui
                                ,uint8_t b
                                );
 
+#if __cplusplus >= 201703L
+        [[maybe_unused]]
+#endif // __cplusplus >= 201703L
         inline
         void get_RGB_code(uint32_t p_color
                          ,uint8_t & r
@@ -66,6 +69,9 @@ namespace simple_gui
         inline
         void refresh();
 
+#if __cplusplus >= 201703L
+        [[maybe_unused]]
+#endif // __cplusplus >= 201703L
         inline
         void refresh(const uint32_t & p_x
                     ,const uint32_t & p_y
@@ -73,18 +79,31 @@ namespace simple_gui
                     ,const uint32_t & p_height
                     );
 
+#if __cplusplus >= 201703L
+        [[nodiscard]]
+        [[maybe_unused]]
+#endif // __cplusplus >= 201703L
         inline
         void * save_buffer()const;
 
+#if __cplusplus >= 201703L
+        [[maybe_unused]]
+#endif // __cplusplus >= 201703L
         inline
         void load_buffer(void *);
 
+#if __cplusplus >= 201703L
+        [[maybe_unused]]
+#endif // __cplusplus >= 201703L
         void * export_rectangle(const uint32_t & p_x
                                ,const uint32_t & p_y
                                ,const uint32_t & p_width
                                ,const uint32_t & p_height
                                );
 
+#if __cplusplus >= 201703L
+        [[maybe_unused]]
+#endif // __cplusplus >= 201703L
         void import_rectangle(const uint32_t & p_x
                              ,const uint32_t & p_y
                              ,const uint32_t & p_width
@@ -92,7 +111,10 @@ namespace simple_gui
                              ,void* p_data
                              );
 
-        inline
+#if __cplusplus >= 201703L
+        [[maybe_unused]]
+#endif // __cplusplus >= 201703L
+        inline static
         void free_rectangle(void *);
 
         virtual
@@ -109,6 +131,10 @@ namespace simple_gui
                                    ,uint32_t p_color
                                    );
 
+#if __cplusplus >= 201703L
+        [[nodiscard]]
+        [[maybe_unused]]
+#endif // __cplusplus >= 201703L
         uint32_t get_pixel(uint32_t p_x
                           ,uint32_t p_y
                           )const;
@@ -121,6 +147,9 @@ namespace simple_gui
                                        ,const uint32_t & p_color
                                        );
 
+#if __cplusplus >= 201703L
+        [[maybe_unused]]
+#endif // __cplusplus >= 201703L
         inline
         void set_rectangle(const uint32_t & p_x
                           ,const uint32_t & p_y
@@ -129,6 +158,9 @@ namespace simple_gui
                           ,const uint32_t & p_color
                           );
 
+#if __cplusplus >= 201703L
+        [[maybe_unused]]
+#endif // __cplusplus >= 201703L
         void draw_line(uint32_t p_x1
                       ,uint32_t p_y1
                       ,uint32_t p_x2
@@ -142,9 +174,17 @@ namespace simple_gui
         inline
         void unlock();
 
+#if __cplusplus >= 201703L
+        [[nodiscard]]
+        [[maybe_unused]]
+#endif // __cplusplus >= 201703L
         inline
         const uint32_t & get_width()const;
 
+#if __cplusplus >= 201703L
+        [[nodiscard]]
+        [[maybe_unused]]
+#endif // __cplusplus >= 201703L
         inline
         const uint32_t & get_height()const;
 
@@ -159,6 +199,9 @@ namespace simple_gui
     };
 
     //------------------------------------------------------------------------------
+#if __cplusplus >= 201703L
+    [[maybe_unused]]
+#endif // __cplusplus >= 201703L
     void * simple_gui::save_buffer()const
     {
         void * l_buffer = new uint8_t[m_size];
@@ -168,6 +211,9 @@ namespace simple_gui
     }
 
     //------------------------------------------------------------------------------
+#if __cplusplus >= 201703L
+    [[maybe_unused]]
+#endif // __cplusplus >= 201703L
     void simple_gui::load_buffer(void * p_buffer)
     {
         memcpy(m_start,p_buffer,m_size);
@@ -183,6 +229,9 @@ namespace simple_gui
     }
 
     //------------------------------------------------------------------------------
+#if __cplusplus >= 201703L
+    [[maybe_unused]]
+#endif // __cplusplus >= 201703L
     void simple_gui::get_RGB_code(uint32_t p_color
                                  ,uint8_t & r
                                  ,uint8_t & g
@@ -199,6 +248,9 @@ namespace simple_gui
     }
 
     //------------------------------------------------------------------------------
+#if __cplusplus >= 201703L
+    [[maybe_unused]]
+#endif // __cplusplus >= 201703L
     void simple_gui::refresh(const uint32_t & p_x
                             ,const uint32_t & p_y
                             ,const uint32_t & p_width
@@ -253,6 +305,9 @@ namespace simple_gui
     }
 
     //------------------------------------------------------------------------------
+#if __cplusplus >= 201703L
+    [[maybe_unused]]
+#endif // __cplusplus >= 201703L
     void simple_gui::set_rectangle(const uint32_t & p_x
                                   ,const uint32_t & p_y
                                   ,const uint32_t & p_width
@@ -287,18 +342,27 @@ namespace simple_gui
     }
 
     //------------------------------------------------------------------------------
+#if __cplusplus >= 201703L
+    [[maybe_unused]]
+#endif // __cplusplus >= 201703L
     const uint32_t & simple_gui::get_width()const
     {
         return m_width;
     }
 
     //------------------------------------------------------------------------------
+#if __cplusplus >= 201703L
+    [[maybe_unused]]
+#endif // __cplusplus >= 201703L
     const uint32_t & simple_gui::get_height()const
     {
         return m_height;
     }
 
     //------------------------------------------------------------------------------
+#if __cplusplus >= 201703L
+    [[maybe_unused]]
+#endif // __cplusplus >= 201703L
     void simple_gui::free_rectangle(void * p_data)
     {
         SDL_FreeSurface((SDL_Surface*)p_data);

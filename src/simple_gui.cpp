@@ -130,6 +130,9 @@ namespace simple_gui
     }
 
     //------------------------------------------------------------------------------
+#if __cplusplus >= 201703L
+    [[nodiscard]] [[maybe_unused]]
+#endif // __cplusplus >= 201703L
     uint32_t simple_gui::get_pixel(uint32_t p_x
                                   ,uint32_t p_y
                                   )const
@@ -154,6 +157,9 @@ namespace simple_gui
     }
 
     //------------------------------------------------------------------------------
+#if __cplusplus >= 201703L
+    [[maybe_unused]]
+#endif // __cplusplus >= 201703L
     void simple_gui::draw_line(uint32_t p_x1
                               ,uint32_t p_y1
                               ,uint32_t p_x2
@@ -403,6 +409,9 @@ namespace simple_gui
     }
 
     //------------------------------------------------------------------------------
+#if __cplusplus >= 201703L
+    [[nodiscard]] [[maybe_unused]]
+#endif // __cplusplus >= 201703L
     void * simple_gui::export_rectangle(const uint32_t & p_x
                                        ,const uint32_t & p_y
                                        ,const uint32_t & p_width
@@ -429,6 +438,9 @@ namespace simple_gui
     }
 
     //------------------------------------------------------------------------------
+#if __cplusplus >= 201703L
+    [[maybe_unused]]
+#endif // __cplusplus >= 201703L
     void simple_gui::import_rectangle(const uint32_t & p_x
                                      ,const uint32_t & p_y
                                      ,const uint32_t & p_width
