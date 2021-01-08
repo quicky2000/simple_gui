@@ -26,83 +26,100 @@
 
 namespace simple_gui
 {
-  class auto_refresh_gui: public simple_gui
-  {
-  public:
-    inline auto_refresh_gui(void);
-    inline void start_refresh(const std::chrono::milliseconds & p_delay);
-    inline void stop_refresh(void);
-    inline const std::chrono::milliseconds & get_delay(void)const;
-    inline bool is_running(void)const;
-    inline ~auto_refresh_gui(void);
-  private:
-    inline static void periodic_refresh(const std::atomic<bool> & p_stop,
-					simple_gui & p_gui,
-					const std::chrono::milliseconds & p_delay);
+    class auto_refresh_gui: public simple_gui
+    {
+      public:
 
-    std::chrono::milliseconds m_delay;
-    std::atomic<bool> m_stop_requested;
-    std::thread * m_thread;
-  };
+        inline
+        auto_refresh_gui();
 
-  //----------------------------------------------------------------------------
-  auto_refresh_gui::auto_refresh_gui(void):
-    simple_gui(),
-    m_delay(33),
-    m_stop_requested(false),
-    m_thread(nullptr)
+        inline
+        void start_refresh(const std::chrono::milliseconds & p_delay);
+
+        inline
+        void stop_refresh();
+
+        inline
+        const std::chrono::milliseconds & get_delay()const;
+
+        inline
+        bool is_running()const;
+
+        inline
+        ~auto_refresh_gui();
+
+      private:
+
+        inline static
+        void periodic_refresh(const std::atomic<bool> & p_stop
+                             ,simple_gui & p_gui
+                             ,const std::chrono::milliseconds & p_delay
+                             );
+
+        std::chrono::milliseconds m_delay;
+        std::atomic<bool> m_stop_requested;
+        std::thread * m_thread;
+    };
+
+    //----------------------------------------------------------------------------
+    auto_refresh_gui::auto_refresh_gui()
+    :simple_gui()
+    ,m_delay(33)
+    ,m_stop_requested(false)
+    ,m_thread(nullptr)
     {
     }
 
     //------------------------------------------------------------------------------
-    void auto_refresh_gui::periodic_refresh(const std::atomic<bool> & p_stop,
-					    simple_gui & p_gui,
-					    const std::chrono::milliseconds & p_delay)
+    void auto_refresh_gui::periodic_refresh(const std::atomic<bool> & p_stop
+                                           ,simple_gui & p_gui
+                                           ,const std::chrono::milliseconds & p_delay
+                                           )
     {
-      while(!static_cast<bool>(p_stop))
-	{
-	  p_gui.refresh();
-	  std::this_thread::sleep_for(p_delay);
-	}
+        while(!static_cast<bool>(p_stop))
+        {
+            p_gui.refresh();
+            std::this_thread::sleep_for(p_delay);
+        }
     }
 
     //------------------------------------------------------------------------------
     void auto_refresh_gui::start_refresh(const std::chrono::milliseconds & p_delay)
     {
-      m_delay = p_delay;
-      m_thread = new std::thread(periodic_refresh,std::ref(m_stop_requested),std::ref(*this),std::ref(m_delay));
+        m_delay = p_delay;
+        m_thread = new std::thread(periodic_refresh,std::ref(m_stop_requested),std::ref(*this),std::ref(m_delay));
     }
 
     //------------------------------------------------------------------------------
-    void auto_refresh_gui::stop_refresh(void)
+    void auto_refresh_gui::stop_refresh()
     {
-      assert(m_thread);
-      m_stop_requested.store(true,std::memory_order_relaxed);      
-      m_thread->join();
-      delete m_thread;
-      m_thread = nullptr;
-      m_stop_requested.store(false,std::memory_order_relaxed);      
+        assert(m_thread);
+        m_stop_requested.store(true,std::memory_order_relaxed);
+        m_thread->join();
+        delete m_thread;
+        m_thread = nullptr;
+        m_stop_requested.store(false,std::memory_order_relaxed);
     }
 
     //------------------------------------------------------------------------------
-    const std::chrono::milliseconds & auto_refresh_gui::get_delay(void)const
-      {
-	return m_delay;
-      }
-
-    //------------------------------------------------------------------------------
-    bool auto_refresh_gui::is_running(void)const
+    const std::chrono::milliseconds & auto_refresh_gui::get_delay()const
     {
-      return nullptr != m_thread;
+        return m_delay;
     }
 
     //------------------------------------------------------------------------------
-    auto_refresh_gui::~auto_refresh_gui(void)
+    bool auto_refresh_gui::is_running()const
     {
-      if(m_thread)
-	{
-	  stop_refresh();
-	}
+        return nullptr != m_thread;
+    }
+
+    //------------------------------------------------------------------------------
+    auto_refresh_gui::~auto_refresh_gui()
+    {
+        if(m_thread)
+        {
+            stop_refresh();
+        }
     }
 
 }

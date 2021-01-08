@@ -32,16 +32,10 @@ int main(int argc, char ** argv)
     if(!l_width || !l_height) return 0;
     const auto l_window_width = (uint32_t)(l_width * 0.9);
     const auto l_window_height = (uint32_t)(l_height * 0.9);
-    l_gui.create_window(l_window_width,
-                        l_window_height
-                       );
-    for(unsigned int l_y = 0;
-            l_y < l_window_height;
-            ++l_y)
+    l_gui.create_window(l_window_width, l_window_height);
+    for(unsigned int l_y = 0; l_y < l_window_height; ++l_y)
     {
-        for(unsigned int l_x = 0;
-            l_x < l_window_width;
-            ++l_x)
+        for(unsigned int l_x = 0; l_x < l_window_width; ++l_x)
         {
             uint32_t l_color = l_gui.get_color_code((uint8_t)(l_x % 256),(uint8_t)(l_y % 256),(uint8_t)((l_x * l_y) % 256));
             l_gui.set_pixel_without_lock(l_x,l_y,l_color);
