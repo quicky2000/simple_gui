@@ -1,5 +1,6 @@
 depend:quicky_exception
 MAIN_CFLAGS:-Wall -ansi -pedantic -g -std=c++11 -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -D__STDC_CONSTANT_MACROS -O0 -g
+MAIN_LDFLAGS:
 CFLAGS:
 LDFLAGS:-lSDL -lpthread
 env_variables:

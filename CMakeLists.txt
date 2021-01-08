@@ -1,20 +1,27 @@
-cmake_minimum_required(VERSION 3.8)
-project(simple_gui)
+#-----------------------------------------
+# CMakeLists Skeleton 2021/01/06
+#-----------------------------------------
+cmake_minimum_required(VERSION 3.11.4)
+project(simple_gui LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 set(MY_SOURCE_FILES
     include/auto_refresh_gui.h
     include/simple_gui.h
-    src/simple_gui.cpp)
+    src/simple_gui.cpp
+   )
 
 # List header directories in project
 set(MY_INCLUDE_DIRECTORIES
-    ${CMAKE_CURRENT_SOURCE_DIR}/include)
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+   )
 
 #Create dependancy list
 set(DEPENDANCY_LIST "quicky_exception")
 #LIST(APPEND DEPENDANCY_LIST "quicky_exception")
+
+set(MY_CPP_FLAGS "-pedantic")
 
 #------------------------------
 #- Generic part
@@ -29,7 +36,6 @@ foreach(DEPENDANCY_ITEM IN ITEMS ${DEPENDANCY_LIST})
     if(NOT TARGET ${DEPENDANCY_ITEM})
         set(SUB_DEPENDANCY_OBJECTS "")
         set(SUB_LINKED_LIBRARIES "")
-        message("${PROJECT_NAME} include dependancy ${DEPENDANCY_ITEM}")
         add_subdirectory($ENV{QUICKY_REPOSITORY}/${DEPENDANCY_ITEM} ${CMAKE_CURRENT_BINARY_DIR}/${DEPENDANCY_ITEM})
         get_target_property(IS_IMPORTED ${DEPENDANCY_ITEM} IMPORTED)
         if(NOT ${IS_IMPORTED})
@@ -43,6 +49,8 @@ foreach(DEPENDANCY_ITEM IN ITEMS ${DEPENDANCY_LIST})
     # Complete include directories with directories coming from dependancy because of transitivity issues with Object libraries
     if(NOT ${IS_IMPORTED})
         set(MY_INCLUDE_DIRECTORIES ${MY_INCLUDE_DIRECTORIES} $<TARGET_PROPERTY:${DEPENDANCY_ITEM},INCLUDE_DIRECTORIES>)
+    else(NOT ${IS_IMPORTED})
+        set(MY_INCLUDE_DIRECTORIES ${MY_INCLUDE_DIRECTORIES} $<TARGET_PROPERTY:${DEPENDANCY_ITEM},INTERFACE_INCLUDE_DIRECTORIES>)
     endif()
 endforeach(DEPENDANCY_ITEM)
 
@@ -57,11 +65,11 @@ if(IS_DIRECTORY ${HAS_PARENT})
     set(SUB_DEPENDANCY_OBJECTS ${DEPENDANCY_OBJECTS} PARENT_SCOPE)
     set(SUB_LINKED_LIBRARIES ${LINKED_LIBRARIES} PARENT_SCOPE)
 else()
-    #set(CMAKE_VERBOSE_MAKEFILE ON)
+    set(CMAKE_CXX_STANDARD 11)
     add_executable(${PROJECT_NAME} ${MY_SOURCE_FILES} ${DEPENDANCY_OBJECTS} src/main_${PROJECT_NAME}.cpp)
     target_compile_definitions(${PROJECT_NAME} PRIVATE -D$<UPPER_CASE:${PROJECT_NAME}>_SELF_TEST)
-    target_compile_options(${PROJECT_NAME} PUBLIC -Wall -ansi -pedantic -g -O0)
     target_link_libraries(${PROJECT_NAME} ${LINKED_LIBRARIES})
+    target_compile_options(${PROJECT_NAME} PUBLIC -Wall -ansi $<$<CONFIG:Debug>:-O0> ${MY_CPP_FLAGS})
 endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${MY_INCLUDE_DIRECTORIES} ${SDL_INCLUDE_DIR})
